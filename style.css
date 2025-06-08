@@ -1,0 +1,347 @@
+/*
+    Theme Name: Twatter
+    Description: A theme that's a bit like Twitter
+    Author: Nathan
+    Author URI: Me
+    Version: 1.0
+*/
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    background-color: #f0f0f1;
+    color: #3c434a;
+}
+
+p{
+    user-select: none;
+}
+
+header{
+    background-color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.navigationBar{
+    background-color: #333;
+    padding: 0;
+    width: 1000px;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.navigationBar__container{
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.navigationBar__container li{
+    margin-right: 1rem;
+    transition: all 0.25s;
+    padding: 20px 0px;
+}
+
+.navigationBar__container li:hover{
+    background-color: rgb(255, 255, 255, 0.1);
+}
+
+.navigationBar__container li a{
+    color: white;
+    text-decoration: none;
+    padding: 20px 15px;
+}
+
+.navigationBar__listItem{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: start;
+    list-style: none;
+    padding: 0 1rem;
+    margin: 0;
+}
+
+.navigationBar__listItem.search{
+    width: 16rem;
+}
+
+.navigationBar__search{
+    margin: 0;
+    padding: 0;
+    padding-left: 2.5rem;
+    width: 100%;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid rgb(97, 97, 97, 0.1);
+    box-shadow: 2px 3px 5px 1px rgb(97, 97, 97, 0.1);
+    font-size: 1rem;
+}
+
+.navigationBar__search-svg{
+    width: 20px;
+    height: 20px;
+    margin-right: 0.5rem;
+    fill: black;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0.5rem;
+}
+
+.navigationBar__searchResults{
+    position: absolute;
+    top: 75px;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 2px 3px 5px 1px rgb(97, 97, 97, 0.1);
+    z-index: 1;
+}
+
+.navigationBar__searchResults-list{
+    list-style: none;
+    margin: 0;
+    padding: 0.5rem;
+}
+
+.navigationBar__searchResults-list .navigationBar__searchResults-item{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1rem;
+    padding: 0;
+    text-decoration: none;
+    transition: all 0.25s;
+}
+
+.navigationBar__listItem.friendRequests{
+    padding: 20px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.navigationBar__friendRequests-svg{
+    width: 20px;
+    height: 20px;
+    margin-right: 0.5rem;
+    fill: white;
+}
+
+.navigationBar__friendRequests{
+    display: none;
+    position: absolute;
+    width: 25rem;
+    z-index: 2;
+    top: 110px;
+    right: 0;
+    background-color: rgba(255, 255, 255);
+    border-radius: 10px;
+    padding: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.navigationBar__friendRequests.active{
+    display: block;
+}
+
+.numberOfFriendRequests{
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 20px;
+    height: 20px;
+    background-color: rgb(248, 3, 3, 0.9);
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 0.8rem;
+    user-select: none;
+}
+
+.navigationBar__friendRequestsList{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.navigationBar__friendRequestsHeader{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.navigationBar__arrow{
+    font-size: 2rem;
+    rotate: 90deg;
+    position: absolute;
+    top: -55px;
+    right: -15px;
+    color: white;
+}
+
+.navigationBar__friendRequestsTitle{
+    font-size: 1.2rem;
+}
+
+.navigationBar__friendRequest{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    text-decoration: none;
+}
+
+.navigationBar__friendRequestInfo{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.navigationBar__friendRequestAvatar{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+main{
+    margin: 0 auto;
+    max-width: 1000px;
+}
+
+.tweet__form{
+    margin-top: 1rem;
+    height: 40px;
+    box-shadow: 2px 3px 5px 1px rgb(97, 97, 97, 0.1);
+    border-radius: 10px;
+    width: 100%;
+    transition: all 0.25s;
+    position: relative;
+    margin-bottom: 1.8rem;
+}
+
+.tweet__form.active{
+    height: 200px;
+}
+
+.tweet__input{
+    height: 40px;
+    width: 100%;
+    font-size: 20px;
+    resize: none;
+    border-radius: 10px;
+    padding: 0 0.5rem;
+    transition: all 0.25s;
+}
+
+.tweet__form.active .tweet__input{
+    height: 200px;
+}
+
+.tweet__postButton{
+    display: none;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    width: 100%;
+    border-radius: 10px;
+    border: 2px solid black;
+    color: black;
+    cursor: pointer;
+    background-color: rgb(212, 212, 212, 0.1);
+    transition: all 0.25s;
+}
+
+.tweet__form.active .tweet__postButton{
+    display: block;
+}
+
+.tweet__postButton:hover{
+    color: white;
+    background-color: rgb(0, 0, 0, 0.9);
+}
+
+.tweet{
+    margin-bottom: 0.8rem;
+    border-radius: 10px;
+    padding: 0.5rem;
+    background-color: white;
+    border: 1px solid rgb(97, 97, 97, 0.3);
+    opacity: 1;
+    transition: all 0.25s;
+}
+
+.tweet-deleting{
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+.tweet__titleContainer{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tweet__button{
+    font-size: 0.8rem;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    border: 1px solid black;
+    color: black;
+    cursor: pointer;
+    background-color: rgb(212, 212, 212, 0.1);
+    transition: all 0.25s;
+    user-select: none;
+}
+
+.tweet__button:hover{
+    color: white;
+    background-color: rgb(0, 0, 0, 0.9);
+}
+
+.tweet__button.disabled{
+    color: rgba(82, 82, 82, 0.9);
+    background-color: rgb(212, 212, 212, 0.4);
+    cursor: initial;
+}
+
+.tweet__editArea{
+    height: 40px;
+    width: 100%;
+    border: none;
+    outline: none;
+}
+
+.tweet__button.save{
+    width: 100%;
+}
+
+.tweet.tweet-editing .tweet__button.edit{
+    display: none;
+}
