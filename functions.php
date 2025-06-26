@@ -137,7 +137,10 @@ function create_friendships_table() {
         UNIQUE KEY unique_friendship (user_id, friend_id)
     ) $charset_collate;";
 
+    //loads the WordPress upgrade functions, including the dbDelta() function.
     require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+    
+     //Used to create or update database tables in WordPress.
     dbDelta($sql);
 
     // log any errors to wp-content/debug.log
