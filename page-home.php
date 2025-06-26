@@ -1,6 +1,6 @@
 <?php
 // Server code to add new tweet if javascript is disabled.
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['tweet__input']) && isset($_POST['submit_tweet']) && is_user_logged_in()) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['tweet__input']) && isset($_POST['tweet__postButton']) && is_user_logged_in()) {
     $tweet_content = sanitize_textarea_field($_POST['tweet__input']);
 
     $new_tweet = wp_insert_post([
@@ -11,12 +11,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['tweet__input']) && i
         'post_author'   => get_current_user_id(),
     ]);
 
-    if (!is_wp_error($new_tweet)) {
-        wp_redirect(home_url());
-        exit;
-    } else {
+    if (is_wp_error($new_tweet)) {
         echo '<p class="text-danger">There was an error posting your tweet.</p>';
-    }
+    } 
 }
 ?>
 
@@ -26,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['tweet__input']) && i
         <form class="tweet__form" method="post">
             <textarea class="tweet__input" name="tweet__input" placeholder="What's on your mind ?"></textarea>
             <input type="hidden" name="tweet__author" class="tweet__author" value="<?php echo esc_attr(wp_get_current_user()->user_login) ?>">
-            <button class="tweet__postButton" name="submit_tweet" type="submit">Post</button>
+            <button class="tweet__postButton" name="tweet__postButton" type="submit">Post</button>
         </form>
     <?php endif; ?>
 

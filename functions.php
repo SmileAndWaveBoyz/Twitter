@@ -60,9 +60,10 @@ function create_tweet_post_type() {
         ],
         'public' => true,
         'show_ui' => true,
-        'supports' => ['title', 'editor'],
         'rewrite' => false,
         'show_in_rest' => true,
+        'supports' => ['title', 'editor'],
+        'menu_icon' => 'dashicons-twitter',
     ]);
 }
 add_action('init', 'create_tweet_post_type');
@@ -72,9 +73,7 @@ function mytheme_register_user_search_endpoint() {
     register_rest_route('mytheme/v1', '/users', [
         'methods'   => 'GET',
         'callback' => 'mytheme_search_users',
-        'permission_callback' => function() {
-            return is_user_logged_in(); //Only alow logged-in users to search
-        },
+        'permission_callback' => fn() => is_user_logged_in(),
     ]);
 }
 add_action('rest_api_init', 'mytheme_register_user_search_endpoint');
@@ -99,9 +98,6 @@ function mytheme_search_users(WP_REST_Request $request) {
     $user_query = new WP_User_Query($args);
     $users = $user_query->get_results();
 
-    if (empty($users)) {
-        return [];
-    }
 
     $results = [];
     foreach ($users as $user) {
@@ -128,6 +124,8 @@ function create_friendships_table() {
     global $wpdb;
     $table_name = $wpdb->prefix . 'friendships';
 
+    //This is a WordPress function that returns the correct character set and collation settings for your database tables. 
+    //Basically you just need it and don't ask why.
     $charset_collate = $wpdb->get_charset_collate();
 
     $sql = "CREATE TABLE IF NOT EXISTS $table_name (
@@ -154,9 +152,7 @@ function register_add_friend_request_endpoint() {
     register_rest_route('mytheme/v1', '/add-friend-request', [
         'methods'   => 'POST',
         'callback'  =>  'add_friend_request',
-        'permission_callback' => function () {
-            return is_user_logged_in(); //Only allow logged-in users
-        },
+        'permission_callback' => fn() => is_user_logged_in(),
     ]);
 }
 add_action('rest_api_init', 'register_add_friend_request_endpoint');
@@ -207,14 +203,14 @@ function register_friend_routes() {
     register_rest_route('mytheme/v1', '/accept-friend-request', [
         'methods'   => 'POST',
         'callback'  =>  'accept_friend_request',
-        'permission_callback' => function () { return is_user_logged_in(); }, //Only alow logged in users
+        'permission_callback' => fn() => is_user_logged_in(),
     ]);
 
     //Reject friend request route
     register_rest_route('mytheme/v1', '/reject-friend-request', [
         'methods'   => 'DELETE',
         'callback'  =>  'reject_friend_request',
-        'permission_callback' => function () { return is_user_logged_in(); }, //Only alow logged in users
+        'permission_callback' => fn() => is_user_logged_in(),
     ]);
 
     // Register the unfriend route
