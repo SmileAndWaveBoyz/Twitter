@@ -215,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return response.json
             })
             .then((data) => {
-                e.target.innerText = 'Request Sent'
+                e.target.innerText = 'Request sent'
                 //Disable the button after sending the request
                 e.target.disabled = true
                 e.target.classList.add('disabled')

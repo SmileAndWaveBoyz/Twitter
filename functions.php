@@ -31,7 +31,7 @@ function add_logout_button($items, $args) {
     }
     return $items;
 }
-add_filter('wp_nav_menu_items', 'add_logout_button', 10, 2);
+add_filter('wp_nav_menu_items', 'add_logout_button', 10, 2); // 10 is the priority of this function, lower numbers run first. 2 is the number of arguments.
 
 // Non logged in users should only be able to access the login and register pages.
 function restrict_access() {
@@ -150,15 +150,36 @@ function create_friendships_table() {
 }
 add_action('after_switch_theme', 'create_friendships_table');
 
-//Create a custom REST API endpoint for sending friend requests
-function register_add_friend_request_endpoint() {
+//Create custom REST API endpoints for accepting, rejecting and unfriending
+function register_friend_request_endpoints() {
+    //Send friend request route
     register_rest_route('mytheme/v1', '/add-friend-request', [
         'methods'   => 'POST',
         'callback'  =>  'add_friend_request',
         'permission_callback' => fn() => is_user_logged_in(),
     ]);
+    //Accept friend request route
+    register_rest_route('mytheme/v1', '/accept-friend-request', [
+        'methods'   => 'POST',
+        'callback'  =>  'accept_friend_request',
+        'permission_callback' => fn() => is_user_logged_in(),
+    ]);
+
+    //Reject friend request route
+    register_rest_route('mytheme/v1', '/reject-friend-request', [
+        'methods'   => 'DELETE',
+        'callback'  =>  'reject_friend_request',
+        'permission_callback' => fn() => is_user_logged_in(),
+    ]);
+
+    // Register the unfriend route
+    register_rest_route('mytheme/v1', '/unfriend', [
+        'methods'   => 'DELETE',
+        'callback'  => 'unfriend_user',
+        'permission_callback' => function () { return is_user_logged_in(); },
+    ]);
 }
-add_action('rest_api_init', 'register_add_friend_request_endpoint');
+add_action('rest_api_init', 'register_friend_request_endpoints');
 
 function add_friend_request($request){
     global $wpdb;
@@ -200,46 +221,21 @@ function add_friend_request($request){
     return rest_ensure_response(['success' => true, 'message' => 'Friend request sent.']);
 }
 
-//Create custom REST API endpoints for accepting, rejecting and unfriending
-function register_friend_routes() {
-    //Accept friend request route
-    register_rest_route('mytheme/v1', '/accept-friend-request', [
-        'methods'   => 'POST',
-        'callback'  =>  'accept_friend_request',
-        'permission_callback' => fn() => is_user_logged_in(),
-    ]);
-
-    //Reject friend request route
-    register_rest_route('mytheme/v1', '/reject-friend-request', [
-        'methods'   => 'DELETE',
-        'callback'  =>  'reject_friend_request',
-        'permission_callback' => fn() => is_user_logged_in(),
-    ]);
-
-    // Register the unfriend route
-    register_rest_route('mytheme/v1', '/unfriend', [
-        'methods'   => 'DELETE',
-        'callback'  => 'unfriend_user',
-        'permission_callback' => function () { return is_user_logged_in(); },
-    ]);
-}
-add_action('rest_api_init', 'register_friend_routes');
-
 //Accept friend request function
 function accept_friend_request($request) {
     global $wpdb;
 
     $friend_request_id = sanitize_text_field($request->get_param('friendRequestId'));
-    $current_user_id = get_current_user_id();
+    $current_user_id = get_current_user_id(); // You could do it without this, it's just good for security to include it so a malicious user can't change a friend request not meant for them.
 
     //Update the friendship status to accepted
     $table_name = $wpdb->prefix . 'friendships';
     $result = $wpdb->update(
-        $table_name,
-        ['status' => 'accepted'],
-        ['id'     => $friend_request_id, 'friend_id' => $current_user_id],
-        ['%s'],
-        ['%d', '%d']
+        $table_name,                        // 1. The name of the table to update
+        ['status' => 'accepted'],           // 2. The data to update (column => new value)
+        ['id' => $friend_request_id, 'friend_id' => $current_user_id], // 3. WHERE clause (column => value)
+        ['%s'],                             // 4. Format for the data to update ('%s' = string)
+        ['%d', '%d']                        // 5. Format for the WHERE clause values ('%d' = integer)
     );
 
     if ($result === false) {

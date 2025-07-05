@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['tweet__input']) && i
 
     if ($query->have_posts()) {
         while ($query->have_posts()) {
-            $query->the_post();
+            $query->the_post();// This makes template tags like the_title(), the_content(), get_the_author_meta(), etc.,
             $is_author = get_current_user_id() === get_the_author_meta('ID');
 
             ?>

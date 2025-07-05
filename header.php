@@ -24,7 +24,6 @@
                     'theme_location' => 'navigation-bar',
                     'container' => 'ul',
                     'menu_class' => 'navigationBar__container',
-                    'fallback_cb' => false,
                 ]);
             ?>
 
