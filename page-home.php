@@ -1,6 +1,6 @@
 <?php
 // Server code to add new tweet if javascript is disabled.
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['tweet__input']) && isset($_POST['tweet__postButton']) && is_user_logged_in()) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['tweet__input']) && is_user_logged_in()) {
     $tweet_content = sanitize_textarea_field($_POST['tweet__input']);
 
     $new_tweet = wp_insert_post([
