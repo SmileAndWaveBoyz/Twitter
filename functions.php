@@ -91,7 +91,7 @@ function mytheme_search_users(WP_REST_Request $request) {
     $args = [
         'search'         => '*' . esc_attr($search_query) . '*',
         'search_columns' => ['user_login', 'user_nicename', 'display_name'],
-        'number'         => 10,
+        'number'         => 10, //Return up to 10 users
         'fields'         => ['ID', 'display_name'],
     ];
 

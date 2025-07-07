@@ -94,9 +94,9 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     
     //Edit tweet button
+    let editingTweet = false
+    let originalContent = ''
     document.addEventListener('click', (e)=> {
-        let editingTweet = false
-        let originalContent = ''
         
         if (e.target && e.target.classList.contains('edit')) {            
             const tweetId = e.target.dataset.tweetId
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <textarea class="tweet__editArea">${originalContent}</textarea>
                 <button class="tweet__button save" data-tweet-id="${tweetId}">Save</button>
             `
-        } else if(e.target && !e.target.classList.contains('tweet__editArea') && !e.target.classList.contains('save')){
+        } else if(editingTweet && e.target && !e.target.classList.contains('tweet__editArea') && !e.target.classList.contains('save')){
             //Stop editing tweet when clicking outside of it
             editingTweet.classList.remove('tweet-editing')
             editingTweet.querySelector('.tweet__content').innerHTML = originalContent
@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                             ${user.is_friend ? `<button class="tweet__button unfriend" data-user-id="${user.id}">Unfriend</button>` : `<button class="tweet__button addFriend" data-user-id="${user.id}">Add Friend</button>`}
                                         </li>
                                     `
-                                })
+                                }).join('')
                             }
                         </ul>
                     `
