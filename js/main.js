@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         //Close the new tweet form when clicking outside of it
         document.addEventListener('click', (e) =>{
-            if (!tweetForm.contains(e.target) && !tweetInput.contains(e.target)) {
+            if (!tweetForm.contains(e.target)) {
                 tweetForm.classList.remove('active')
             }
         })
@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
         //Add a new tweet when the form is submitted
         tweetForm.addEventListener('submit', (e)=>{
             e.preventDefault()
+
             fetch(`${dataVar.apiUrl}wp/v2/tweet`, {
                 method: 'POST',
                 headers:{
@@ -94,29 +95,31 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     
     //Edit tweet button
-    let editingTweet = false
-    let originalContent = ''
+    let editingTweet = null
+    let tweetContent = null
+    let orginalContent = ''
     document.addEventListener('click', (e)=> {
-        
-        if (e.target && e.target.classList.contains('edit')) {            
-            const tweetId = e.target.dataset.tweetId
+        if (e.target.classList.contains('edit') && editingTweet == null) {
             editingTweet = e.target.closest('.tweet')
-            const tweetContent = editingTweet.querySelector('.tweet__content')
-            
-            //Add this class to the tweet element to remove the edit button
+            tweetContent = editingTweet.querySelector('.tweet__content')
+            orginalContent = tweetContent.innerText
+
+            //Add this class to make the edit button disapear
             editingTweet.classList.add('tweet-editing')
-            originalContent = tweetContent.innerText
 
             tweetContent.innerHTML = `
-                <textarea class="tweet__editArea">${originalContent}</textarea>
-                <button class="tweet__button save" data-tweet-id="${tweetId}">Save</button>
+                <textarea class="tweet__editArea">${orginalContent}</textarea>
+                <button class="tweet__button save">Save</button>
             `
-        } else if(editingTweet && e.target && !e.target.classList.contains('tweet__editArea') && !e.target.classList.contains('save')){
-            //Stop editing tweet when clicking outside of it
+        }
+    })
+
+    //Stop editing the tweet when clicking outside of it
+    document.addEventListener('click', (e)=>{
+        if (editingTweet && !editingTweet.contains(e.target)) {
             editingTweet.classList.remove('tweet-editing')
-            editingTweet.querySelector('.tweet__content').innerHTML = originalContent
-            editingTweet = false
-            originalContent = ''
+            tweetContent.innerText = orginalContent
+            editingTweet = null
         }
     })
 

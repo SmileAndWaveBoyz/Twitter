@@ -4,6 +4,7 @@
 function add_css_and_js() {
     wp_enqueue_style('bootstrap-css', 'https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css');
     wp_enqueue_script('bootstrap-js', 'https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js', ['jquery'], null, true);
+    
     wp_enqueue_style('style', get_stylesheet_uri());
     wp_enqueue_script('main', get_template_directory_uri() . '/js/main.js', [], null, true);
 
@@ -15,7 +16,7 @@ function add_css_and_js() {
 }
 add_action('wp_enqueue_scripts', 'add_css_and_js');
 
-// This function sets up theme support for post thumbnails and register a navigation menu.
+// Sets up theme support for post thumbnails and register a navigation menu.
 function setup() {
     add_theme_support('post-thumbnails');
     register_nav_menus([
@@ -60,7 +61,7 @@ function create_tweet_post_type() {
         ],
         'public' => true,
         'show_ui' => true,
-        'rewrite' => false,
+        'rewrite' => false, //Disables pretty permalinks for this post type
         'show_in_rest' => true,
         'supports' => ['title', 'editor'],
         'menu_icon' => 'dashicons-twitter',
@@ -176,7 +177,7 @@ function register_friend_request_endpoints() {
     register_rest_route('mytheme/v1', '/unfriend', [
         'methods'   => 'DELETE',
         'callback'  => 'unfriend_user',
-        'permission_callback' => function () { return is_user_logged_in(); },
+        'permission_callback' => fn() => is_user_logged_in(),
     ]);
 }
 add_action('rest_api_init', 'register_friend_request_endpoints');
