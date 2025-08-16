@@ -68,11 +68,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     //Delete tweet button
-    document.addEventListener('click', (e)=>{
+    document.addEventListener('click', (e)=> {
         if (e.target && e.target.classList.contains('delete')) {
-            const tweetId = e.target.dataset.tweetId
-            
-            fetch(`${dataVar.apiUrl}wp/v2/tweet/${tweetId}`, {
+            const tweetID = e.target.dataset.tweetId
+            const deletingTweet = e.target.closest('.tweet')
+
+            fetch(`${dataVar.restUrl}wp/v2/tweet/${tweetID}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -81,16 +82,14 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .then((response) => {
                 if (!response.ok) {
-                    throw new Error("Failed to delete tweet");
+                    throw new Error("Couldn't delete tweet :(");
                 }
-                return response
+                deletingTweet.classList.add('tweet-deleting')
+                deletingTweet.addEventListener('transitionend',(e)=>{
+                    deletingTweet.remove()
+                })
             })
-            .then((data) => {
-                e.target.closest('.tweet').classList.add('tweet-deleting')
-                setTimeout(() => {
-                    e.target.closest('.tweet').remove()
-                }, 300);
-            })
+            .catch(error => console.log(error))
         }
     })
     
@@ -98,18 +97,19 @@ document.addEventListener('DOMContentLoaded', () => {
     let editingTweet = null
     let tweetContent = null
     let orginalContent = ''
-    document.addEventListener('click', (e)=> {
-        if (e.target.classList.contains('edit') && editingTweet == null) {
+    document.addEventListener('click', (e)=>{
+        if (e.target && e.target.classList.contains('edit') && editingTweet == null) {
+            const tweetID = e.target.dataset.tweetId
             editingTweet = e.target.closest('.tweet')
             tweetContent = editingTweet.querySelector('.tweet__content')
             orginalContent = tweetContent.innerText
 
-            //Add this class to make the edit button disapear
+            //Add this class to remove the edit button
             editingTweet.classList.add('tweet-editing')
 
             tweetContent.innerHTML = `
                 <textarea class="tweet__editArea">${orginalContent}</textarea>
-                <button class="tweet__button save">Save</button>
+                <button class="tweet__button save" data-tweet-id="${tweetID}">Save</button>                                                                                                          
             `
         }
     })
@@ -123,32 +123,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     })
 
-    //Save edited tweet button
-    document.addEventListener('click', (e)=>{
+    //Save tweet button
+    document.addEventListener('click', (e)=> {
         if (e.target && e.target.classList.contains('save')) {
-            const tweetId = e.target.dataset.tweetId
-            const tweet = e.target.closest('.tweet')
-            const tweetEditArea = tweet.querySelector('.tweet__editArea').value
-            
-            fetch(`${dataVar.apiUrl}wp/v2/tweet/${tweetId}`, {
+
+            const tweetID = e.target.dataset.tweetId
+            const tweetEditArea = editingTweet.querySelector('.tweet__editArea').value
+
+            fetch(`${dataVar.restUrl}wp/v2/tweet/${tweetID}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-WP-Nonce': dataVar.nonce
                 },
-                body: JSON.stringify({content: tweetEditArea})
+                body: JSON.stringify({
+                    content: tweetEditArea
+                })
             })
             .then((response) => {
                 if (!response.ok) {
-                    throw new Error("Failed to Update tweet");
+                    throw new Error("Couldn't update tweet :(");
                 }
                 return response.json()
             })
             .then((data) => {
-                //Replace the textarea with the updated content
-                tweet.querySelector('.tweet__content').innerText = tweetEditArea
-                tweet.classList.remove('tweet-editing')
+                editingTweet.classList.remove('tweet-editing')
                 e.target.remove()
+                tweetContent.innerText = tweetEditArea
+                editingTweet = null
             })
             .catch(error => console.log(error))
         }
